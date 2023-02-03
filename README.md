@@ -1,3 +1,11 @@
+# Updated by Danny to make it work correctly in background for iOS
+
+On iOS, even if you have the proper permissions for background location gather, you still must not update any UI otherwise, the app will hang including the background task(s).
+I had to change AppDelegate so that background and foreground events let the model view know to not update the UI and resume only when it's in foreground.
+I've added console write so you can verify in the Application Output that the background task is running (for both iOS and Android).
+
+I also don't like "magic" numbers and strings so I've created a MessageNames class to define all the message strings so that there won't be any typos for using MessageCenter API's.
+
 # Background Location Service
 
 XamarinForms.LocationService is an application that refreshes every n seconds GPS location. For years I have been working developing mobile apps that require location features; hopefully, the current project will save you some time in regarding service and location management in your Xamarin application for Android and iOS.

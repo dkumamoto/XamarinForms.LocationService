@@ -1,4 +1,5 @@
-﻿using Xamarin.Essentials;
+﻿using System;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using XamarinForms.LocationService.Messages;
 using XamarinForms.LocationService.Utils;
@@ -13,6 +14,7 @@ namespace XamarinForms.LocationService.ViewModels
         public string userMessage;
         public bool startEnabled;
         public bool stopEnabled;
+        private string timeStr;
         #endregion vars
 
         #region properties
@@ -40,6 +42,12 @@ namespace XamarinForms.LocationService.ViewModels
         {
             get => stopEnabled;
             set => SetProperty(ref stopEnabled, value);
+        }
+
+        public string TimeStr
+        {
+            get => timeStr;
+            set => SetProperty(ref timeStr, value);
         }
         #endregion properties
 
@@ -70,7 +78,7 @@ namespace XamarinForms.LocationService.ViewModels
         public void OnStopClick()
         {
             var message = new StopServiceMessage();
-            MessagingCenter.Send(message, "ServiceStopped");
+            MessagingCenter.Send(message, MessageNames.ServiceStopped);
             UserMessage = "Location Service has been stopped!";
             SecureStorage.SetAsync(Constants.SERVICE_STATUS_KEY, "0");
             StartEnabled = true;
@@ -89,28 +97,42 @@ namespace XamarinForms.LocationService.ViewModels
         void Start() 
         {
             var message = new StartServiceMessage();
-            MessagingCenter.Send(message, "ServiceStarted");
+            MessagingCenter.Send(message, MessageNames.ServiceStarted);
             UserMessage = "Location Service has been started!";
             SecureStorage.SetAsync(Constants.SERVICE_STATUS_KEY, "1");
             StartEnabled = false;
             StopEnabled = true;
         }
 
+
+        bool InBackground = false;
+
         void HandleReceivedMessages()
         {
-            MessagingCenter.Subscribe<LocationMessage>(this, "Location", message => {
-                Device.BeginInvokeOnMainThread(() => {
-                    Latitude = message.Latitude;
-                    Longitude = message.Longitude;
-                    UserMessage = "Location Updated";
-                });
+            MessagingCenter.Subscribe<LocationMessage>(this, MessageNames.Location, message => {
+                var timestr = DateTime.Now.ToString();
+                if (!InBackground)
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Latitude = message.Latitude;
+                        Longitude = message.Longitude;
+                        TimeStr = timestr;
+                        UserMessage = "Location Updated";
+                    });
+                }
+                Console.WriteLine(timestr + ": location " + message.Latitude + "," + message.Longitude );
             });
-            MessagingCenter.Subscribe<StopServiceMessage>(this, "ServiceStopped", message => {
+            MessagingCenter.Subscribe<BackgroundState>(this, MessageNames.BackgroundState, message =>
+            {
+                InBackground = message.InBackground;
+            });
+            MessagingCenter.Subscribe<StopServiceMessage>(this, MessageNames.ServiceStopped, message => {
                 Device.BeginInvokeOnMainThread(() => {
                     UserMessage = "Location Service has been stopped!";
                 });
             });
-            MessagingCenter.Subscribe<LocationErrorMessage>(this, "LocationError", message => {
+            MessagingCenter.Subscribe<LocationErrorMessage>(this, MessageNames.LocationError, message => {
                 Device.BeginInvokeOnMainThread(() => {
                     UserMessage = "There was an error updating location!";
                 });

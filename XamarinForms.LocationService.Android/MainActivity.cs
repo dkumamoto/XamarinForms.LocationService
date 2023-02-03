@@ -44,7 +44,7 @@ namespace XamarinForms.LocationService.Droid
 
         void SetServiceMethods()
         {
-            MessagingCenter.Subscribe<StartServiceMessage>(this, "ServiceStarted", message => {
+            MessagingCenter.Subscribe<StartServiceMessage>(this, MessageNames.ServiceStarted, message => {
                 if (!IsServiceRunning(typeof(AndroidLocationService)))
                 {
                     if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.O)
@@ -58,7 +58,7 @@ namespace XamarinForms.LocationService.Droid
                 }
             });
 
-            MessagingCenter.Subscribe<StopServiceMessage>(this, "ServiceStopped", message => {
+            MessagingCenter.Subscribe<StopServiceMessage>(this, MessageNames.ServiceStopped, message => {
                 if (IsServiceRunning(typeof(AndroidLocationService)))
                     StopService(serviceIntent);
             });

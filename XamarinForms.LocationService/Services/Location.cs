@@ -36,7 +36,7 @@ namespace XamarinForms.LocationService.Services
 
 							Device.BeginInvokeOnMainThread(() =>
 							{
-								MessagingCenter.Send<LocationMessage>(message, "Location");
+								MessagingCenter.Send<LocationMessage>(message, MessageNames.Location);
 							});
 						}
 					}
@@ -45,7 +45,7 @@ namespace XamarinForms.LocationService.Services
 						Device.BeginInvokeOnMainThread(() =>
 						{
 							var errormessage = new LocationErrorMessage();
-							MessagingCenter.Send<LocationErrorMessage>(errormessage, "LocationError");
+							MessagingCenter.Send<LocationErrorMessage>(errormessage, MessageNames.LocationError);
 						});
 					}
 				}

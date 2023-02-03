@@ -35,7 +35,7 @@ namespace XamarinForms.LocationService.iOS.Services
 				{
 					var message = new StopServiceMessage();
 					Device.BeginInvokeOnMainThread(
-						() => MessagingCenter.Send(message, "ServiceStopped")
+						() => MessagingCenter.Send(message, MessageNames.ServiceStopped)
 					);
 				}
 			}

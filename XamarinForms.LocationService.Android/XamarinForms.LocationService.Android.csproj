@@ -16,7 +16,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidUseAapt2>true</AndroidUseAapt2>
@@ -107,7 +106,7 @@
   <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\XamarinForms.LocationService\XamarinForms.LocationService.csproj">
-      <Project>{50FE2429-84ED-4B20-9778-4479C5D8B199}</Project>
+      <Project>{A22289B2-5F1A-4F3E-A1E4-F84028F829D4}</Project>
       <Name>XamarinForms.LocationService</Name>
     </ProjectReference>
   </ItemGroup>

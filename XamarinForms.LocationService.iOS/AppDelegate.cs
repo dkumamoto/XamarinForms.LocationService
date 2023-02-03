@@ -37,12 +37,12 @@ namespace XamarinForms.LocationService.iOS
 
         void SetServiceMethods()
         {
-            MessagingCenter.Subscribe<StartServiceMessage>(this, "ServiceStarted", async message => {
+            MessagingCenter.Subscribe<StartServiceMessage>(this, MessageNames.ServiceStarted, async message => {
                 if (!locationService.isStarted)
                     await locationService.Start();
             });
 
-            MessagingCenter.Subscribe<StopServiceMessage>(this, "ServiceStopped", message => {
+            MessagingCenter.Subscribe<StopServiceMessage>(this, MessageNames.ServiceStopped, message => {
                 if (locationService.isStarted)
                     locationService.Stop();
             });
@@ -58,6 +58,22 @@ namespace XamarinForms.LocationService.iOS
             {
                 completionHandler(UIBackgroundFetchResult.NoData);
             }
+        }
+
+        public override void DidEnterBackground(UIApplication uiApplication)
+        {
+            base.DidEnterBackground(uiApplication);
+            var message = new BackgroundState { InBackground = true };
+            Device.BeginInvokeOnMainThread(() => MessagingCenter.Send(message, MessageNames.BackgroundState));
+
+        }
+
+        [Export("applicationWillEnterForeground:")]
+        public override void WillEnterForeground(UIApplication application)
+        {
+            var message = new BackgroundState { InBackground = false };
+            Device.BeginInvokeOnMainThread(() => MessagingCenter.Send(message, MessageNames.BackgroundState));
+
         }
     }
 }

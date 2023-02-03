@@ -40,7 +40,7 @@
                 </FormattedString>
             </Label.FormattedText>
         </Label>
-
+        <Label Text="{Binding TimeStr}" />
         <Label Text="{Binding UserMessage}" VerticalOptions="CenterAndExpand"/>
 
     </StackLayout>
