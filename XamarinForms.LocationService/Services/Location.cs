@@ -28,10 +28,11 @@ namespace XamarinForms.LocationService.Services
 						var location = await Geolocation.GetLocationAsync(request);
 						if (location != null)
 						{
-							var message = new LocationMessage 
+							var message = new LocationMessage
 							{
 								Latitude = location.Latitude,
-								Longitude = location.Longitude
+								Longitude = location.Longitude,
+								TimeStamp = DateTime.Now
 							};
 
 							Device.BeginInvokeOnMainThread(() =>

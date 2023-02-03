@@ -7,6 +7,7 @@ using Xamarin.Forms;
 using XamarinForms.LocationService.Services;
 using XamarinForms.LocationService.Messages;
 using XamarinForms.LocationService.Droid.Helpers;
+using System;
 
 namespace XamarinForms.LocationService.Droid.Services
 {
@@ -24,17 +25,20 @@ namespace XamarinForms.LocationService.Droid.Services
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
 		{
 			_cts = new CancellationTokenSource();
-
-			Notification notif = DependencyService.Get<INotification>().ReturnNotif();
+			var notifService = DependencyService.Get<INotification>();
+            Notification notif = notifService.ReturnNotif();
 			StartForeground(SERVICE_RUNNING_NOTIFICATION_ID, notif);
+            MessagingCenter.Subscribe<LocationMessage>(this, MessageNames.Location, message => {
+				notifService.UpdateMessage(message.TimeStamp.ToString(), "location " + message.Latitude + "," + message.Longitude);
+            });
 
-			Task.Run(() => {
+            Task.Run(() => {
 				try
 				{
 					var locShared = new Location();
 					locShared.Run(_cts.Token).Wait();
 				}
-				catch (OperationCanceledException)
+				catch (Android.Accounts.OperationCanceledException)
 				{
 				}
 				finally
@@ -52,6 +56,8 @@ namespace XamarinForms.LocationService.Droid.Services
 			return StartCommandResult.Sticky;
 		}
 
+
+
 		public override void OnDestroy()
 		{
 			if (_cts != null)
@@ -59,6 +65,7 @@ namespace XamarinForms.LocationService.Droid.Services
 				_cts.Token.ThrowIfCancellationRequested();
 				_cts.Cancel();
 			}
+			MessagingCenter.Unsubscribe<LocationMessage>(this, MessageNames.Location);
 			base.OnDestroy();
 		}
 	}

@@ -110,18 +110,17 @@ namespace XamarinForms.LocationService.ViewModels
         void HandleReceivedMessages()
         {
             MessagingCenter.Subscribe<LocationMessage>(this, MessageNames.Location, message => {
-                var timestr = DateTime.Now.ToString();
                 if (!InBackground)
                 {
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         Latitude = message.Latitude;
                         Longitude = message.Longitude;
-                        TimeStr = timestr;
+                        TimeStr = message.TimeStamp.ToString();
                         UserMessage = "Location Updated";
                     });
                 }
-                Console.WriteLine(timestr + ": location " + message.Latitude + "," + message.Longitude );
+                Console.WriteLine(message.TimeStamp.ToString() + ": location " + message.Latitude + "," + message.Longitude );
             });
             MessagingCenter.Subscribe<BackgroundState>(this, MessageNames.BackgroundState, message =>
             {
@@ -138,5 +137,6 @@ namespace XamarinForms.LocationService.ViewModels
                 });
             });
         }
+
     }
 }
